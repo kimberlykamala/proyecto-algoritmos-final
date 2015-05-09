@@ -1,0 +1,220 @@
+#include <iostream>
+#include <conio.h>
+#include <stdio.h>
+using namespace std;
+
+#define c 1000
+struct cliente
+{
+	int idcliente;
+	char nombre[30];
+	char email[80];
+	char telf[12];
+	char NIT[10];
+};
+struct vendedor
+{
+	int idvendedor;
+	char nombre[30];
+	char email[80];
+	char telf[12];
+};
+struct producto
+{
+	int idproducto;
+	char nombre[30];
+	float preciounit;
+	float stock;
+};
+struct automotor
+{
+	int automot;
+	char placa[12];
+	int idcliente;
+};
+struct bomba
+{
+	int idbomba;
+	char descripcion[20];
+	int idproducto;
+	int idvendedor;
+};
+struct compras
+{
+	int idcompra;
+	char fecha[10];
+	int idproducto;
+	float cantidad;
+	float preciototal;
+};
+struct ventas
+{
+	int idventas;
+	char fecha[10];
+	int idproducto;
+	float cantidad;
+	float preciototal;
+	int idbomba;
+	int idauto;
+};
+
+int verificarplaca(char placa[])
+{
+	FILE *ptr;
+	int w=0;
+	automotor reg;
+	ptr=fopen("automotor.dat","rb");
+	fread(&reg,sizeof(reg),1,ptr);
+	if(ptr!=NULL)
+	{
+		while(feof(ptr)==false)
+		{
+			if(reg.placa==placa)
+			{
+				fclose(ptr);
+				w=1;
+			}
+		}
+		fclose(ptr);
+		return w;
+	}
+	else
+	{
+		return -1;
+	}
+}
+char validarplaca()
+{
+	char cad[15];
+	do
+	{
+		do
+		{
+			gets(cad);
+		}
+		while(strlen(cad)==0);
+		while(i<4)
+		{
+			if(cad[i]!='0' && cad[i]!='1' && cad[i]!='2' && cad[i]!='3' && cad[i]!='4' && cad[i]!='5' && cad[i]!='6' && cad[i]!='7' && cad[i]!='8' && cad[i]!='9')
+				w=false; 
+			i++;
+		}
+		while(i<8)
+		{
+			if(cad[i]<'A' || cad[i]>'Z')
+				w=false;
+			i++;
+		}
+		if(w==false)
+			cout<<"Ingrese una placa valida!!";
+	}
+	while(w==false);
+	return cad;
+}
+void registrarcliente()
+{
+	FILE *ptr;
+	cliente reg;
+	reg.idcliente=c;
+	c++;
+	cout<<"ingrese nombre:";
+	gets(reg.nombre);
+	cout<<"ingrese email: ";
+	gets(reg.email);
+	cout<<"ingrese telefono: ";
+	gets(reg.telf);
+	cout<<"ingrese nit: ";
+	gets(nit);
+	ptr=fopen("cliente.dat","ab");
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+int verif(char placa)
+{
+	FILE *ptr;
+	automotor aut;
+	ptr=fopen("automotor.dat","ab");
+	fread(&aut,sizeof(aut),1,ptr);
+	while(feof(ptr)==false)
+	{
+		if(reg.placa==placa)
+		{
+			fclose(ptr);
+			return reg.idcliente;
+		}
+		fread(&aut,sizeof(aut),1,ptr);
+	}
+}
+void registrarventa(char placa)
+{
+	FILE *ptr;
+	automotor aut;
+	ventas vent;
+	cout<<"ingrese fecha:";
+	gets(vent.fecha);
+	cout<<"ingrese id producto: ";
+	cin>>vent.idproducto;
+	cout<<"ingrese la cantidad: ";
+	cin>>vent.cantidad;
+	cout<<"ingrese id bomba: ";
+	cin>>vent.idbomba;
+	vent.idauto=verif(placa);
+	ptr=fopen("ventas.dat","ab");
+	fwrite(&vent,sizeof(vent),1,ptr);
+	fclose(ptr);
+}
+void registrarautomotor(char placa)
+{
+	FILE *ptr;
+
+
+void main()
+{
+	FILE *ptr;
+	automotor aut;
+	ventas vent;
+	int a,o,b=0;
+	do
+	{
+		b=0;
+		cout<<"vender"<<endl;
+		cout<<"ingrese la placa: ";
+		aut.placa=validarplaca();
+		a=verificarplaca(aut.placa);
+		if(a==1)
+		{
+			registrarventa(aut.placa);
+		}
+		else
+		{
+			if(a==0)
+			{
+				cout<<"la placa no existe, desea registrarla?";
+				cout<<"1.Si"<<endl<<"2.No"<<endl<<"ingrese opcion: ";
+				cin>>o;
+				do{
+					switch(o)
+					{
+					case 1:
+						registrarcliente();
+						registrarautomotor(aut.placa);
+						break;
+					case 2:
+						b=1;
+						break;
+					default:
+						cout<<"ingrese una opcion valida:";
+						break;
+					}
+				}
+				while(o!=1 || o!=2);
+			}
+			else
+			{
+				cout<<"el archivo no existe";
+			}
+		}
+	}
+	while(b==1);
+}
+
